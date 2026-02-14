@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NBVH 💖 TAT</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+
+<style>
+body {
+  margin: 0;
+  overflow: hidden;
+  height: 100vh;
+  background: radial-gradient(circle at bottom, #4b004f 0%, #1a001f 60%, #000 100%);
+  font-family: 'Pacifico', cursive;
+}
+
+/* Ảnh trung tâm */
+.center-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+.center-image img {
+  width: 260px;
+  border-radius: 20px;
+  box-shadow: 0 0 40px #ff66cc;
+  transition: opacity 1s ease, transform 1s ease;
+}
+
+/* Trái tim chuẩn */
+.heart {
+  position: absolute;
+  background: #ff4d88;
+  transform: rotate(45deg);
+  animation: flyUp linear forwards;
+  box-shadow: 0 0 15px #ff4d88, 0 0 30px #ff99cc;
+}
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  background: #ff4d88;
+  border-radius: 50%;
+}
+
+/* Lời chúc */
+.message {
+  position: absolute;
+  color: white;
+  font-size: 22px;
+  text-shadow: 0 0 10px #ff99cc, 0 0 20px #ff4d88;
+  white-space: nowrap;
+  animation: flyUp linear forwards;
+}
+
+/* Animation */
+@keyframes flyUp {
+  0% {
+    transform: translateY(0) rotate(45deg);
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  100% {
+    transform: translateY(-120vh) rotate(45deg);
+    opacity: 0;
+  }
+}
+
+/* Nút nhạc */
+.music-btn {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 20px);
+  right: 20px;
+  background: linear-gradient(45deg, #ff4d88, #ff99cc);
+  color: white;
+  border: none;
+  padding: 14px 22px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-size: 18px;
+  box-shadow: 0 0 20px #ff99cc;
+  z-index: 9999;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+
+.music-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 0 30px #ff66cc;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="center-image" id="centerImage">
+  <img id="mainImage" src="dji_0480.jpg">
+</div>
+
+<button class="music-btn" onclick="toggleMusic()">💖 Play Music</button>
+
+<audio id="bgMusic" loop>
+  <source src="VIỆT NAM TINH HOA - Nguyễn Hải Phong x Kawaii Tuấn Anh - MV Chủ Đề Giải Thưởng TINH HOA VIỆT 2025.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+
+/* ===== ẢNH ===== */
+const uploadedImages = [
+    "dji_0480.jpg",
+    "dji_0484.jpg",
+    "2.jpg",
+    "3.jpg",
+    "4.jpg",
+    "5.jpg",
+    "6.jpg",
+    "7.jpg",
+    "8.jpg",
+    "9.jpg",
+    "10.jpg",
+    "11.jpg",
+    "img_3173.jpg",
+    "img_5119ab.jpg",
+    "img_5120.jpg",
+    "img_5153.jpg",
+    "img_5327.jpg",
+    "img_5328.jpg",
+    "img_5329.jpg",
+    "img_5331.jpg",
+    "img_5332.jpg",
+    "img_5333.jpg",
+    "img_5334.jpg",
+    "img_7444.jpg",
+    "img_7467.jpg",
+    "img_7468.jpg",
+    "img_7469.jpg",
+    "img_7470.jpg",
+    "img_7471.jpg",
+    "img_7472.jpg",
+    "img_7473.jpg",
+    "img_7474.jpg",
+    "img_7475.jpg"
+];
+
+let currentImageIndex = 0;
+
+/* ===== LỜI CHÚC ===== */
+const messages = [
+  "Happy Valentine 💖",
+  "Yêu Tún Chịnh nhìu ❤️",
+  "14.02 💝",
+  "Mai đi Va lung tung không :)))",
+  "mạnh dạn 1 ngày 14.2 thử có ny xem lào :)))"
+];
+
+/* ===== TRÁI TIM ===== */
+function createHeart() {
+
+  const heart = document.createElement("div");
+  heart.classList.add("heart");
+
+  const size = Math.random() * 20 + 15;
+  const duration = Math.random() * 5 + 8;
+
+  heart.style.width = size + "px";
+  heart.style.height = size + "px";
+  heart.style.left = Math.random() * 100 + "vw";
+  heart.style.bottom = "-40px";
+  heart.style.animationDuration = duration + "s";
+
+  document.body.appendChild(heart);
+
+  /* fix shape đúng */
+  const before = document.createElement("style");
+  before.innerHTML = `
+    .heart::before {
+      width: ${size}px;
+      height: ${size}px;
+      top: -${size/2}px;
+      left: 0;
+    }
+    .heart::after {
+      width: ${size}px;
+      height: ${size}px;
+      left: -${size/2}px;
+      top: 0;
+    }
+  `;
+  document.head.appendChild(before);
+
+  setTimeout(() => heart.remove(), duration * 1000);
+}
+
+/* ===== LỜI CHÚC BAY ===== */
+function createMessage() {
+
+  const msg = document.createElement("div");
+  msg.classList.add("message");
+
+  const duration = Math.random() * 5 + 8;
+
+  msg.textContent = messages[Math.floor(Math.random() * messages.length)];
+  msg.style.left = Math.random() * 80 + "vw";
+  msg.style.bottom = "-40px";
+  msg.style.animationDuration = duration + "s";
+
+  document.body.appendChild(msg);
+
+  setTimeout(() => msg.remove(), duration * 1000);
+}
+
+/* ===== SLIDESHOW ===== */
+function startImageSlideshow() {
+
+  const center = document.getElementById("centerImage");
+  const img = document.getElementById("mainImage");
+
+  center.style.opacity = 1;
+
+  setInterval(() => {
+
+    img.style.opacity = 0;
+    img.style.transform = "scale(0.95)";
+
+    setTimeout(() => {
+      currentImageIndex++;
+      if (currentImageIndex >= uploadedImages.length) {
+        currentImageIndex = 0;
+      }
+      img.src = uploadedImages[currentImageIndex];
+      img.style.opacity = 1;
+      img.style.transform = "scale(1)";
+    }, 1000);
+
+  }, 10000);
+}
+
+/* ===== NHẠC ===== */
+function toggleMusic() {
+  const music = document.getElementById("bgMusic");
+  const btn = document.querySelector(".music-btn");
+
+  if (music.paused) {
+    music.play();
+    btn.textContent = "💔 Pause Music";
+  } else {
+    music.pause();
+    btn.textContent = "💖 Play Music";
+  }
+}
+
+
+/* ===== KHỞI CHẠY ===== */
+
+setInterval(createHeart, 300);
+setInterval(createMessage, 1500);
+
+/* 7 giây đầu chưa hiện ảnh */
+setTimeout(() => {
+  startImageSlideshow();
+}, 7000);
+
+</script>
+
+</body>
+</html>
